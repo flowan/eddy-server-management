@@ -36,7 +36,7 @@ echo "Copy SSH settings from root and create new key"
 
 cp /root/.ssh/authorized_keys /home/{{ $server->username }}/.ssh/authorized_keys
 cp /root/.ssh/known_hosts /home/{{ $server->username }}/.ssh/known_hosts
-ssh-keygen -f /home/{{ $server->username }}/.ssh/id_rsa -t rsa -N ''
+ssh-keygen -f /home/{{ $server->username }}/.ssh/id_rsa -t rsa -N '' <<< y
 
 @if($sshKeys->isNotEmpty())
 echo "Add SSH keys to authorized_keys"
