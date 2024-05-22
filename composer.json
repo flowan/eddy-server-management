@@ -5,7 +5,7 @@
     "keywords": [],
     "license": "AGPL-3.0",
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "bepsvpt/secure-headers": "^7.4",
         "blade-ui-kit/blade-heroicons": "^2.1",
         "laravel/cashier-paddle": "^1.7",
