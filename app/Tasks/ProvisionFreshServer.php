@@ -30,7 +30,7 @@ class ProvisionFreshServer extends Task implements HasCallbacks
 
     protected function onFailed(TaskModel $task, Request $request)
     {
-        dispatch(new CleanupFailedServerProvisioning($this->server, $this->taskModel));
+        dispatch(new CleanupFailedServerProvisioning($this->server, $task));
     }
 
     protected function onFinished(TaskModel $task, Request $request)
