@@ -30,7 +30,6 @@
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#56b6da" />
         <meta name="msapplication-TileColor" content="#ff0000" />
         <meta name="theme-color" content="#292935" />
-        <script src="https://cdn.usefathom.com/script.js" data-site="OYWLCWCD" defer></script>
     </head>
     <body class="overflow-y-scroll font-sans antialiased">
         @splade
