@@ -43,7 +43,7 @@ class ServerProvisioningFailed extends Notification implements ShouldQueue
             ->when($this->output, function (MailMessage $message) {
                 $message
                     ->line(__("Here you'll find the 10 last lines of the task that failed:"))
-                    ->line(Markdown::parse("```{$this->output}```"));
+                    ->line(Markdown::parse("```\n{$this->output}\n```"));
             })
             ->when($this->errorMessage, function (MailMessage $message) {
                 $message
