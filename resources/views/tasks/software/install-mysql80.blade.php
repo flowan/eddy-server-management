@@ -3,10 +3,11 @@
 echo "Install MySQL 8.0"
 
 waitForAptUnlock
+gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B7B3B788A8D3785C && gpg --export B7B3B788A8D3785C > /usr/share/keyrings/mysql-stable-archive-keyring.gpg
 
 # https://dev.mysql.com/doc/mysql-apt-repo-quick-guide/en/#apt-repo-fresh-install
-wget -c https://dev.mysql.com/get/mysql-apt-config_0.8.24-1_all.deb
-dpkg --install mysql-apt-config_0.8.24-1_all.deb
+wget -c https://dev.mysql.com/get/mysql-apt-config_0.8.30-1_all.deb
+dpkg --install mysql-apt-config_0.8.30-1_all.deb
 
 waitForAptUnlock
 apt-get update
@@ -52,4 +53,4 @@ mysql --user="root" --password="{{ $server->database_password }}" -e "CREATE DAT
 
 service mysql restart
 
-rm mysql-apt-config_0.8.24-1_all.deb
+rm mysql-apt-config_0.8.30-1_all.deb
