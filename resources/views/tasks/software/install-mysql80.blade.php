@@ -3,30 +3,16 @@
 echo "Install MySQL 8.0"
 
 waitForAptUnlock
-gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B7B3B788A8D3785C && gpg --export B7B3B788A8D3785C > /usr/share/keyrings/mysql-stable-archive-keyring.gpg
-
-# https://dev.mysql.com/doc/mysql-apt-repo-quick-guide/en/#apt-repo-fresh-install
-wget -c https://dev.mysql.com/get/mysql-apt-config_0.8.30-1_all.deb
-dpkg --install mysql-apt-config_0.8.30-1_all.deb
-
-waitForAptUnlock
 apt-get update
 
 waitForAptUnlock
-
-debconf-set-selections <<< "mysql-community-server mysql-community-server/data-dir select ''"
-debconf-set-selections <<< "mysql-community-server mysql-community-server/root-pass password {{ $server->database_password }}"
-debconf-set-selections <<< "mysql-community-server mysql-community-server/re-root-pass password {{ $server->database_password }}"
-
-# Install from mysql.com to prevent installing older 5.7.x stuff
-apt-get install -y mysql-community-server
-apt-get install -y mysql-server
+apt-get install -y mysql-server-core-8.0 mysql-server-8.0
 
 echo "default_password_lifetime = 0" >> /etc/mysql/mysql.conf.d/mysqld.cnf
 
 echo "" >> /etc/mysql/my.cnf
 echo "[mysqld]" >> /etc/mysql/my.cnf
-echo "default_authentication_plugin=mysql_native_password" >> /etc/mysql/my.cnf
+echo "default_authentication_plugin=caching_sha2_password" >> /etc/mysql/my.cnf
 echo "skip-log-bin" >> /etc/mysql/my.cnf
 
 sed -i "s/^max_connections.*=.*/max_connections={{ $mysqlMaxConnections() }}/" /etc/mysql/my.cnf
@@ -36,6 +22,14 @@ if grep -q "bind-address" /etc/mysql/mysql.conf.d/mysqld.cnf; then
 else
   echo "bind-address = *" >> /etc/mysql/mysql.conf.d/mysqld.cnf
 fi
+
+# Set the root password
+mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH caching_sha2_password BY '{{ $server->database_password }}';"
+mysql -e "DELETE FROM mysql.user WHERE User = '';"
+mysql -e "DELETE FROM mysql.user WHERE User = 'root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');"
+mysql -e "DROP DATABASE IF EXISTS test;"
+mysql -e "DELETE FROM mysql.db WHERE Db = 'test' OR Db = 'test\\_%';"
+mysql -e "FLUSH PRIVILEGES;"
 
 mysql --user="root" --password="{{ $server->database_password }}" -e "CREATE USER 'root'@'{{ $server->public_ipv4 }}' IDENTIFIED BY '{{ $server->database_password }}';"
 mysql --user="root" --password="{{ $server->database_password }}" -e "CREATE USER 'root'@'%' IDENTIFIED BY '{{ $server->database_password }}';"
@@ -52,5 +46,3 @@ mysql --user="root" --password="{{ $server->database_password }}" -e "FLUSH PRIV
 mysql --user="root" --password="{{ $server->database_password }}" -e "CREATE DATABASE {{ config('eddy.server_defaults.database_name') }} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 
 service mysql restart
-
-rm mysql-apt-config_0.8.30-1_all.deb
