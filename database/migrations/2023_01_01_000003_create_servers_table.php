@@ -24,13 +24,14 @@ return new class extends Migration
             $table->string('provider_id')->nullable();
 
             $table->string('region')->nullable();
-            $table->string('type')->nullable();
+            $table->string('size')->nullable();
             $table->string('image')->nullable();
 
             $table->integer('cpu_cores')->nullable();
             $table->integer('memory_in_mb')->nullable();
             $table->integer('storage_in_gb')->nullable();
             $table->string('operating_system')->nullable();
+            $table->string('type')->nullable();
 
             $table->string('status');
 

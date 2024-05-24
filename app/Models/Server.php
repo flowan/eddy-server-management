@@ -6,7 +6,7 @@ use App\Events\ServerDeleted;
 use App\Events\ServerUpdated;
 use App\Exceptions\ServerHandler;
 use App\Infrastructure\Entities\ServerStatus;
-use App\Infrastructure\Entities\ServerType;
+use App\Infrastructure\Entities\ServerSize;
 use App\Infrastructure\ProviderFactory;
 use App\Infrastructure\ServerProvider;
 use App\Jobs\CreateServerOnInfrastructure;
@@ -54,7 +54,7 @@ class Server extends Model
         'name',
         'credentials_id',
         'region',
-        'type',
+        'size',
         'image',
     ];
 
@@ -157,15 +157,15 @@ class Server extends Model
     }
 
     /**
-     * Updates the model by the ServerType entity.
+     * Updates the model by the ServerSize entity.
      */
-    public function updateType(ServerType $type): self
+    public function updateSize(ServerSize $size): self
     {
         $this->forceFill([
-            'cpu_cores' => $type->cpuCores,
-            'memory_in_mb' => $type->memoryInMb,
-            'storage_in_gb' => $type->storageInGb,
-            'type' => $type->id,
+            'cpu_cores' => $size->cpuCores,
+            'memory_in_mb' => $size->memoryInMb,
+            'storage_in_gb' => $size->storageInGb,
+            'size' => $size->id,
         ])->save();
 
         return $this;

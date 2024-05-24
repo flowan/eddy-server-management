@@ -98,7 +98,7 @@ Route::middleware('splade')->group(function () use ($authMiddleware) {
 
         Route::middleware('can:view,credentials')->group(function () {
             Route::get('servers/provider/{credentials}/regions', [ServerProviderController::class, 'regions'])->name('servers.provider.regions');
-            Route::get('servers/provider/{credentials}/types/{region}', [ServerProviderController::class, 'types'])->name('servers.provider.types');
+            Route::get('servers/provider/{credentials}/sizes/{region}', [ServerProviderController::class, 'sizes'])->name('servers.provider.sizes');
             Route::get('servers/provider/{credentials}/images/{region}', [ServerProviderController::class, 'images'])->name('servers.provider.images');
         });
 

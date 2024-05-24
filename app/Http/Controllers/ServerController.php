@@ -106,7 +106,7 @@ class ServerController extends Controller
             'name' => $request->validated('name'),
             'credentials_id' => $credentials?->id,
             'region' => $request->validated('region'),
-            'type' => $request->validated('type'),
+            'size' => $request->validated('size'),
             'image' => $request->validated('image'),
         ]);
 

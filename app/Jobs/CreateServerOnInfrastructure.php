@@ -65,7 +65,7 @@ class CreateServerOnInfrastructure implements ShouldQueue
         $providerId = $client->createServer(
             name: Str::slug($this->server->name),
             regionId: $this->server->region,
-            typeId: $this->server->type,
+            sizeId: $this->server->size,
             imageId: $this->server->image,
             sshKeyIds: $sshKeys
         );

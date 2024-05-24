@@ -40,9 +40,9 @@
                     <x-splade-select name="region" :label="__('Region')" remote-url="`/servers/provider/${form.credentials_id}/regions`" />
                     <x-splade-select
                         v-if="form.region"
-                        name="type"
-                        :label="__('Type')"
-                        remote-url="`/servers/provider/${form.credentials_id}/types/${form.region}`"
+                        name="size"
+                        :label="__('Size')"
+                        remote-url="`/servers/provider/${form.credentials_id}/sizes/${form.region}`"
                     />
                     <x-splade-select
                         v-if="form.region"

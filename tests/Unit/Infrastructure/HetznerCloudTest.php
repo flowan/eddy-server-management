@@ -6,7 +6,7 @@ use App\Infrastructure\Entities\Distribution;
 use App\Infrastructure\Entities\Image;
 use App\Infrastructure\Entities\OperatingSystem;
 use App\Infrastructure\Entities\ServerStatus;
-use App\Infrastructure\Entities\ServerType;
+use App\Infrastructure\Entities\ServerSize;
 use App\Infrastructure\HetznerCloud;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
@@ -105,7 +105,7 @@ class HetznerCloudTest extends TestCase
     }
 
     /** @test */
-    public function it_has_available_server_types_by_region()
+    public function it_has_available_server_sizes_by_region()
     {
         Http::fake([
             'https://api.hetzner.cloud/v1/datacenters/1' => [
@@ -166,21 +166,21 @@ class HetznerCloudTest extends TestCase
             ],
         ]);
 
-        $serverTypes = (new HetznerCloud(''))->findAvailableServerTypesByRegion('1');
+        $serverSizes = (new HetznerCloud(''))->findAvailableServerSizesByRegion('1');
 
-        $this->assertCount(1, $serverTypes);
+        $this->assertCount(1, $serverSizes);
 
-        /** @var ServerType $serverType */
-        $serverType = $serverTypes->first();
+        /** @var ServerSize $serverSize */
+        $serverSize = $serverSizes->first();
 
-        $this->assertEquals('cx11', $serverType->id);
-        $this->assertEquals(1, $serverType->cpuCores);
-        $this->assertEquals(2048, $serverType->memoryInMb);
-        $this->assertEquals(20, $serverType->storageInGb);
-        $this->assertEquals('cx11: 1 CPU, 2 GB RAM, 20 GB (€3.29/month)', $serverType->name);
+        $this->assertEquals('cx11', $serverSize->id);
+        $this->assertEquals(1, $serverSize->cpuCores);
+        $this->assertEquals(2048, $serverSize->memoryInMb);
+        $this->assertEquals(20, $serverSize->storageInGb);
+        $this->assertEquals('cx11: 1 CPU, 2 GB RAM, 20 GB (€3.29/month)', $serverSize->name);
 
-        $this->assertEquals(329, $serverType->monthlyPriceAmount);
-        $this->assertEquals('EUR', $serverType->monthlyPriceCurrency);
+        $this->assertEquals(329, $serverSize->monthlyPriceAmount);
+        $this->assertEquals('EUR', $serverSize->monthlyPriceCurrency);
     }
 
     /** @test */
@@ -370,9 +370,9 @@ class HetznerCloudTest extends TestCase
         $this->assertEquals(1, $server->id);
         $this->assertEquals('Nuremberg 1 DC 3', $server->region->name);
         $this->assertEquals(Distribution::Ubuntu, $server->image->distribution);
-        $this->assertEquals(2048, $server->type->memoryInMb);
-        $this->assertEquals(1, $server->type->cpuCores);
-        $this->assertEquals(20, $server->type->storageInGb);
+        $this->assertEquals(2048, $server->size->memoryInMb);
+        $this->assertEquals(1, $server->size->cpuCores);
+        $this->assertEquals(20, $server->size->storageInGb);
         $this->assertEquals(ServerStatus::Running, $server->status);
     }
 

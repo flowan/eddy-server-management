@@ -1,7 +1,7 @@
 <?php
 
 use App\Infrastructure\Entities\ServerStatus;
-use App\Infrastructure\Entities\ServerType;
+use App\Infrastructure\Entities\ServerSize;
 use App\Jobs\CreateServerOnInfrastructure;
 use App\Jobs\ProvisionServer;
 use App\Jobs\WaitForServerToConnect;
@@ -52,25 +52,25 @@ class ServerTest extends TestCase
     }
 
     /** @test */
-    public function it_can_update_type_updates_server_type()
+    public function it_can_update_size_updates_server_size()
     {
-        $serverType1 = new ServerType('t2.micro', 1, 1024, 30);
-        $serverType2 = new ServerType('t3.small', 2, 2048, 60);
+        $serverSize1 = new ServerSize('t2.micro', 1, 1024, 30);
+        $serverSize2 = new ServerSize('t3.small', 2, 2048, 60);
 
         /** @var Server */
         $server = Server::factory()->create([
-            'type' => $serverType1->id,
+            'size' => $serverSize1->id,
             'cpu_cores' => 1,
             'memory_in_mb' => 1024,
             'storage_in_gb' => 30,
         ]);
 
-        $server->updateType($serverType2);
+        $server->updateSize($serverSize2);
 
-        $this->assertEquals($serverType2->id, $server->type);
-        $this->assertEquals($serverType2->cpuCores, $server->cpu_cores);
-        $this->assertEquals($serverType2->memoryInMb, $server->memory_in_mb);
-        $this->assertEquals($serverType2->storageInGb, $server->storage_in_gb);
+        $this->assertEquals($serverSize2->id, $server->size);
+        $this->assertEquals($serverSize2->cpuCores, $server->cpu_cores);
+        $this->assertEquals($serverSize2->memoryInMb, $server->memory_in_mb);
+        $this->assertEquals($serverSize2->storageInGb, $server->storage_in_gb);
     }
 
     /** @test */

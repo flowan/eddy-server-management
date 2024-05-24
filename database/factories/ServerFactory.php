@@ -32,7 +32,7 @@ class ServerFactory extends Factory
             'ssh_port' => 22,
             'public_ipv4' => '1.1.1.1',
             'region' => 18,
-            'type' => 20,
+            'size' => 20,
             'image' => 9,
 
             'created_by_user_id' => UserFactory::new(),

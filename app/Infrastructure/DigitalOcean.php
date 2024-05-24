@@ -102,15 +102,15 @@ class DigitalOcean implements ServerProvider, HasCredentials
     }
 
     /**
-     * Map a DigitalOcean size to an Entities\ServerType.
+     * Map a DigitalOcean size to an Entities\ServerSize.
      *
-     * @return \App\Infrastructure\Entities\ServerType
+     * @return \App\Infrastructure\Entities\ServerSize
      */
-    public function mapSize(array $size): Entities\ServerType
+    public function mapSize(array $size): Entities\ServerSize
     {
         $monthlyPriceAmount = $size['price_monthly'] ?? null;
 
-        return new Entities\ServerType(
+        return new Entities\ServerSize(
             $size['slug'],
             $size['vcpus'],
             $size['memory'],
@@ -125,7 +125,7 @@ class DigitalOcean implements ServerProvider, HasCredentials
      *
      * @see https://docs.digitalocean.com/reference/api/api-reference/#tag/Sizes
      */
-    public function findAvailableServerTypesByRegion(string $regionId): Collection
+    public function findAvailableServerSizesByRegion(string $regionId): Collection
     {
         $sizes = $this->getAll('sizes', ['region' => $regionId]);
 
@@ -220,12 +220,12 @@ class DigitalOcean implements ServerProvider, HasCredentials
      *
      * @param  array  $sshKeyIds
      */
-    public function createServer(string $name, string $regionId, string $typeId, string $imageId, array|string|Collection $sshKeyIds): string
+    public function createServer(string $name, string $regionId, string $sizeId, string $imageId, array|string|Collection $sshKeyIds): string
     {
         return (string) $this->http->post(self::API_URL.'droplets', [
             'name' => $name,
             'region' => $regionId,
-            'size' => $typeId,
+            'size' => $sizeId,
             'image' => $imageId,
             'backups' => false,
             'ipv6' => true,
@@ -254,7 +254,7 @@ class DigitalOcean implements ServerProvider, HasCredentials
         return new Entities\Server(
             id: (string) $droplet['id'],
             region: $this->mapRegion($droplet['region']),
-            type: $this->mapSize($droplet['size']),
+            size: $this->mapSize($droplet['size']),
             image: $this->mapImage($droplet['image']),
             status: $status
         );

@@ -41,11 +41,11 @@ class VagrantTest extends TestCase
     }
 
     /** @test */
-    public function it_has_available_server_types_by_region()
+    public function it_has_available_server_sizes_by_region()
     {
-        $serverTypes = $this->instance->findAvailableServerTypesByRegion('my-region');
+        $serverSizes = $this->instance->findAvailableServerSizesByRegion('my-region');
 
-        $this->assertCount(3, $serverTypes);
+        $this->assertCount(3, $serverSizes);
     }
 
     /** @test */

@@ -7,7 +7,7 @@ use App\Infrastructure\Entities\OperatingSystem;
 use App\Infrastructure\Entities\Region;
 use App\Infrastructure\Entities\Server;
 use App\Infrastructure\Entities\ServerStatus;
-use App\Infrastructure\Entities\ServerType;
+use App\Infrastructure\Entities\ServerSize;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -99,22 +99,22 @@ class HetznerCloud implements ServerProvider, HasCredentials
     }
 
     /**
-     * Map a HetznerCloud server type to an Entities\ServerType.
+     * Map a HetznerCloud server size to an Entities\ServerSize.
      */
-    public function mapServerType(array $serverType, string $datacenterName = null): ServerType
+    public function mapServerSize(array $serverSize, string $datacenterName = null): ServerSize
     {
         if ($datacenterName) {
             $datacenterName = Str::before($datacenterName, '-');
-            $prices = Collection::make($serverType['prices'] ?? [])->firstWhere('location', $datacenterName);
+            $prices = Collection::make($serverSize['prices'] ?? [])->firstWhere('location', $datacenterName);
         }
 
         $monthlyPriceAmount = $prices['price_monthly']['net'] ?? null;
 
-        return new ServerType(
-            $serverType['name'],
-            $serverType['cores'],
-            $serverType['memory'] * 1024,
-            $serverType['disk'],
+        return new ServerSize(
+            $serverSize['name'],
+            $serverSize['cores'],
+            $serverSize['memory'] * 1024,
+            $serverSize['disk'],
             ! is_null($monthlyPriceAmount) ? (int) ($monthlyPriceAmount * 100) : null,
             'EUR',
         );
@@ -125,19 +125,19 @@ class HetznerCloud implements ServerProvider, HasCredentials
      *
      * @see https://docs.hetzner.cloud/#server-types-get-all-server-types
      */
-    public function findAvailableServerTypesByRegion(string $regionId): Collection
+    public function findAvailableServerSizesByRegion(string $regionId): Collection
     {
         $datacenter = $this->http->get(self::API_URL."datacenters/{$regionId}");
 
         $datacenterName = $datacenter->json('datacenter.name');
-        $availableServerTypes = $datacenter->json('datacenter.server_types.available');
-        $supportedServerTypes = $datacenter->json('datacenter.server_types.supported');
+        $availableServerSizes = $datacenter->json('datacenter.server_types.available');
+        $supportedServerSizes = $datacenter->json('datacenter.server_types.supported');
 
         return $this->getAll('server_types')
             ->where('architecture', 'x86')
-            ->whereIn('id', $availableServerTypes)
-            ->whereIn('id', $supportedServerTypes)
-            ->map(fn (array $serverType) => $this->mapServerType($serverType, $datacenterName))
+            ->whereIn('id', $availableServerSizes)
+            ->whereIn('id', $supportedServerSizes)
+            ->map(fn (array $serverSize) => $this->mapServerSize($serverSize, $datacenterName))
             ->sortBy->name
             ->keyBy->id;
     }
@@ -223,11 +223,11 @@ class HetznerCloud implements ServerProvider, HasCredentials
      *
      * @param  array  $sshKeyIds
      */
-    public function createServer(string $name, string $regionId, string $typeId, string $imageId, array|string|Collection $sshKeyIds): string
+    public function createServer(string $name, string $regionId, string $sizeId, string $imageId, array|string|Collection $sshKeyIds): string
     {
         return (string) $this->http->post(self::API_URL.'servers', [
             'name' => $name,
-            'server_type' => $typeId,
+            'server_type' => $sizeId,
             'location' => $regionId,
             'start_after_create' => true,
             'ssh_keys' => Collection::wrap($sshKeyIds)->map(fn ($sshKeyId) => (int) $sshKeyId)->unique()->values()->all(),
@@ -258,7 +258,7 @@ class HetznerCloud implements ServerProvider, HasCredentials
         return new Server(
             id: $server['id'],
             region: $this->mapDatacenter($server['datacenter']),
-            type: $this->mapServerType($server['server_type']),
+            size: $this->mapServerSize($server['server_type']),
             image: $this->mapImage($server['image']),
             status: $status
         );

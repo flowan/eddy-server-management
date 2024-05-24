@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use App\Infrastructure\Entities\Image;
 use App\Infrastructure\Entities\Region;
-use App\Infrastructure\Entities\ServerType;
+use App\Infrastructure\Entities\ServerSize;
 use App\Infrastructure\ProviderFactory;
 use App\Infrastructure\ServerProvider;
 use App\Models\Credentials;
@@ -48,7 +48,7 @@ class CreateServerRequest extends FormRequest
             'custom_server' => ['boolean'],
             'public_ipv4' => ['nullable', 'required_if:custom_server,1', 'ipv4'],
             'region' => ['nullable', 'required_unless:custom_server,1'],
-            'type' => ['nullable', 'required_unless:custom_server,1'],
+            'size' => ['nullable', 'required_unless:custom_server,1'],
             'image' => ['nullable', 'required_unless:custom_server,1'],
             'ssh_keys' => ['array'],
             'ssh_keys.*' => [Rule::exists('ssh_keys', 'id')->where('user_id', $this->user()->id)],
@@ -89,10 +89,10 @@ class CreateServerRequest extends FormRequest
                 return;
             }
 
-            $provider->findAvailableServerTypesByRegion($region->id)->first(function (ServerType $type) {
-                return $type->id === $this->input('type');
+            $provider->findAvailableServerSizesByRegion($region->id)->first(function (ServerSize $size) {
+                return $size->id === $this->input('size');
             }, function () use ($validator) {
-                $validator->errors()->add('type', 'The selected type is invalid.');
+                $validator->errors()->add('size', 'The selected size is invalid.');
             });
 
             $provider->findAvailableServerImagesByRegion($region->id)->first(function (Image $image) {

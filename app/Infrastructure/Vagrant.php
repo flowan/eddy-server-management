@@ -7,7 +7,7 @@ use App\Infrastructure\Entities\Image as EntitiesImage;
 use App\Infrastructure\Entities\OperatingSystem;
 use App\Infrastructure\Entities\Region as EntitiesRegion;
 use App\Infrastructure\Entities\ServerStatus;
-use App\Infrastructure\Entities\ServerType;
+use App\Infrastructure\Entities\ServerSize;
 use Exception;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
@@ -68,14 +68,14 @@ class Vagrant implements ServerProvider
     }
 
     /**
-     * Get all available server types by region.
+     * Get all available server sizes by region.
      */
-    public function findAvailableServerTypesByRegion(string $regionId): Collection
+    public function findAvailableServerSizesByRegion(string $regionId): Collection
     {
         return Collection::make([
-            new ServerType('ubuntu-2204-1', 1, 1024, 40),
-            new ServerType('ubuntu-2204-2', 2, 2048, 40),
-            new ServerType('ubuntu-2204-4', 4, 4096, 40),
+            new ServerSize('ubuntu-2204-1', 1, 1024, 40),
+            new ServerSize('ubuntu-2204-2', 2, 2048, 40),
+            new ServerSize('ubuntu-2204-4', 4, 4096, 40),
         ])->keyBy->id;
     }
 
@@ -136,16 +136,16 @@ class Vagrant implements ServerProvider
      *
      * @param  array  $sshKeyIds
      */
-    public function createServer(string $name, string $regionId, string $typeId, string $imageId, array|string|Collection $sshKeyIds): string
+    public function createServer(string $name, string $regionId, string $sizeId, string $imageId, array|string|Collection $sshKeyIds): string
     {
         $sshKeyPublicKeys = Collection::wrap($sshKeyIds)->map(function ($sshKeyId) {
             return $this->sshKeys[$sshKeyId]->publicKey;
         })->filter()->implode(PHP_EOL);
 
-        $serverTypes = $this->findAvailableServerTypesByRegion($regionId);
+        $serverSizes = $this->findAvailableServerSizesByRegion($regionId);
 
-        /** @var ServerType */
-        $type = $serverTypes->firstWhere('id', $typeId) ?: $serverTypes->first();
+        /** @var ServerSize */
+        $size = $serverSizes->firstWhere('id', $sizeId) ?: $serverSizes->first();
 
         $id = (string) $this->generateServerId();
         $ipAddress = $this->getPublicIpv4OfServer($id);
@@ -158,8 +158,8 @@ Vagrant.configure(\"2\") do |config|
 
   config.vm.provider \"virtualbox\" do |vb|
     vb.name = '{$name}-{$id}'
-    vb.memory = {$type->memoryInMb}
-    vb.cpus = {$type->cpuCores}
+    vb.memory = {$size->memoryInMb}
+    vb.cpus = {$size->cpuCores}
     vb.customize ['modifyvm', :id, '--natdnsproxy1', 'on']
     vb.customize ['modifyvm', :id, '--natdnshostresolver1', 'on']
     vb.customize ['modifyvm', :id, '--ostype', 'Ubuntu_64']
@@ -274,7 +274,7 @@ end
         return new Entities\Server(
             id: (string) $id,
             region: $region = $this->findAvailableServerRegions()->first(),
-            type: $this->findAvailableServerTypesByRegion($region->id)->first(),
+            size: $this->findAvailableServerSizesByRegion($region->id)->first(),
             image: $this->findAvailableServerImagesByRegion($region->id)->first(),
             status: $status,
             metadata: [

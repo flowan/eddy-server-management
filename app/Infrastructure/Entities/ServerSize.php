@@ -6,7 +6,7 @@ use Money\Currency;
 use Money\Formatter\IntlMoneyFormatter;
 use Money\Money;
 
-class ServerType
+class ServerSize
 {
     public readonly string $name;
 

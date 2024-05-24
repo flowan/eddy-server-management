@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Infrastructure\Entities\Image;
 use App\Infrastructure\Entities\OperatingSystem;
 use App\Infrastructure\Entities\Region;
-use App\Infrastructure\Entities\ServerType;
+use App\Infrastructure\Entities\ServerSize;
 use App\Infrastructure\ProviderFactory;
 use App\Infrastructure\ServerProvider;
 use App\Models\Credentials;
@@ -29,17 +29,17 @@ class ServerProviderController extends Controller
         });
     }
 
-    public function types(Credentials $credentials, $region)
+    public function sizes(Credentials $credentials, $region)
     {
         /** @var ServerProvider */
         $provider = $this->providerFactory->forCredentials($credentials);
 
-        return $provider->findAvailableServerTypesByRegion($region)
-            ->sortBy(function (ServerType $serverType) {
-                return $serverType->monthlyPriceAmount;
+        return $provider->findAvailableServerSizesByRegion($region)
+            ->sortBy(function (ServerSize $serverSize) {
+                return $serverSize->monthlyPriceAmount;
             })
-            ->mapWithKeys(function (ServerType $serverType) {
-                return [$serverType->id => $serverType->name];
+            ->mapWithKeys(function (ServerSize $serverSize) {
+                return [$serverSize->id => $serverSize->name];
             });
     }
 

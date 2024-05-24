@@ -75,7 +75,7 @@ class ServerTest extends DuskTestCase
             $this->assertEquals(Provider::Vagrant, $server->provider);
             $this->assertEquals(ServerStatus::New, $server->status);
             $this->assertEquals('localhost', $server->region);
-            $this->assertEquals('ubuntu-2204-1', $server->type);
+            $this->assertEquals('ubuntu-2204-1', $server->size);
             $this->assertEquals('ubuntu-2204', $server->image);
 
             $this->assertNull($server->provider_id);
@@ -135,7 +135,7 @@ class ServerTest extends DuskTestCase
             $this->assertEquals(Provider::CustomServer, $server->provider);
             $this->assertEquals(ServerStatus::New, $server->status);
             $this->assertNull($server->region);
-            $this->assertNull($server->type);
+            $this->assertNull($server->size);
             $this->assertNull($server->image);
 
             $this->assertNull($server->provider_id);

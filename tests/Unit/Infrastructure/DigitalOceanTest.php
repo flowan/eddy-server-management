@@ -7,7 +7,7 @@ use App\Infrastructure\Entities\Distribution;
 use App\Infrastructure\Entities\Image;
 use App\Infrastructure\Entities\OperatingSystem;
 use App\Infrastructure\Entities\ServerStatus;
-use App\Infrastructure\Entities\ServerType;
+use App\Infrastructure\Entities\ServerSize;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -76,7 +76,7 @@ class DigitalOceanTest extends TestCase
     }
 
     /** @test */
-    public function it_has_available_server_types_by_region()
+    public function it_has_available_server_sizes_by_region()
     {
         $servers = [
             ['slug' => 's-2vcpu-2gb', 'available' => true, 'vcpus' => '2', 'disk' => '20', 'memory' => 2048, 'regions' => ['nyc1', 'sfo1']],
@@ -94,18 +94,18 @@ class DigitalOceanTest extends TestCase
             ],
         ]);
 
-        $serverTypes = (new DigitalOcean(''))->findAvailableServerTypesByRegion('sfo1');
+        $serverSizes = (new DigitalOcean(''))->findAvailableServerSizesByRegion('sfo1');
 
-        $this->assertCount(1, $serverTypes);
+        $this->assertCount(1, $serverSizes);
 
-        /** @var ServerType $serverType */
-        $serverType = $serverTypes->first();
+        /** @var ServerSize $serverSize */
+        $serverSize = $serverSizes->first();
 
-        $this->assertEquals('s-2vcpu-2gb', $serverType->id);
-        $this->assertEquals(2, $serverType->cpuCores);
-        $this->assertEquals(2048, $serverType->memoryInMb);
-        $this->assertEquals(20, $serverType->storageInGb);
-        $this->assertEquals('s-2vcpu-2gb: 2 CPU, 2 GB RAM, 20 GB', $serverType->name);
+        $this->assertEquals('s-2vcpu-2gb', $serverSize->id);
+        $this->assertEquals(2, $serverSize->cpuCores);
+        $this->assertEquals(2048, $serverSize->memoryInMb);
+        $this->assertEquals(20, $serverSize->storageInGb);
+        $this->assertEquals('s-2vcpu-2gb: 2 CPU, 2 GB RAM, 20 GB', $serverSize->name);
     }
 
     /** @test */
@@ -273,9 +273,9 @@ class DigitalOceanTest extends TestCase
         $this->assertEquals(1, $server->id);
         $this->assertEquals('San Francisco 1', $server->region->name);
         $this->assertEquals(Distribution::Ubuntu, $server->image->distribution);
-        $this->assertEquals(2048, $server->type->memoryInMb);
-        $this->assertEquals(2, $server->type->cpuCores);
-        $this->assertEquals(20, $server->type->storageInGb);
+        $this->assertEquals(2048, $server->size->memoryInMb);
+        $this->assertEquals(2, $server->size->cpuCores);
+        $this->assertEquals(20, $server->size->storageInGb);
         $this->assertEquals(ServerStatus::Running, $server->status);
     }
 
