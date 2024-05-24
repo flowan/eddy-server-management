@@ -13,6 +13,7 @@ use App\Tasks\ReloadCaddy;
 use App\Tasks\RestartMySql;
 use App\Tasks\RestartPhp81;
 use App\Tasks\RestartPhp82;
+use App\Tasks\RestartPhp83;
 use Illuminate\Support\Collection;
 
 class ServerFiles
@@ -98,6 +99,14 @@ class ServerFiles
             );
         }
 
+        if ($this->server->softwareIsInstalled(Software::Php83)) {
+            $logs[] = new FileOnServer(
+                __('PHP 8.3 FPM Log'),
+                __('The PHP 8.3 FPM Log documents all requests made to the PHP 8.3 FastCGI Process Manager, allowing you to monitor performance and identify any issues that may arise.'),
+                '/var/log/php8.3-fpm.log'
+            );
+        }
+
         return $logs->each(fn (FileOnServer $fileOnServer) => $fileOnServer->context($this->server->name));
     }
 
@@ -150,6 +159,22 @@ class ServerFiles
                 __('The PHP 8.2 FPM Configuration file controls how PHP 8.2 processes requests. You can use this file to configure PHP 8.2 to work with your application.'),
                 '/etc/php/8.2/fpm/php-fpm.conf',
                 afterUpdating: fn () => $this->server->runTask(RestartPhp82::class)->asRoot()->inBackground()->dispatch(),
+            );
+        }
+
+        if ($this->server->softwareIsInstalled(Software::Php83)) {
+            $files[] = new FileOnServer(
+                __('PHP 8.3 ini File'),
+                __('The PHP 8.3 ini File contains configuration options for the PHP 8.3 interpreter, allowing you to customize the behavior of your PHP applications.'),
+                '/etc/php/8.3/fpm/php.ini',
+                afterUpdating: fn () => $this->server->runTask(RestartPhp83::class)->asRoot()->inBackground()->dispatch(),
+            );
+
+            $files[] = new FileOnServer(
+                __('PHP 8.3 FPM Configuration'),
+                __('The PHP 8.3 FPM Configuration file controls how PHP 8.3 processes requests. You can use this file to configure PHP 8.3 to work with your application.'),
+                '/etc/php/8.3/fpm/php-fpm.conf',
+                afterUpdating: fn () => $this->server->runTask(RestartPhp83::class)->asRoot()->inBackground()->dispatch(),
             );
         }
 

@@ -15,6 +15,7 @@ enum Software: string
     case Node18 = 'node18';
     case Php81 = 'php81';
     case Php82 = 'php82';
+    case Php83 = 'php83';
     case Redis6 = 'redis6';
 
     /**
@@ -28,8 +29,9 @@ enum Software: string
 
             // Redis should be installed before PHP
             self::Redis6,
-            self::Php81,
-            self::Php82,
+            // self::Php81,
+            // self::Php82,
+            self::Php83,
             self::Composer2,
             self::Node18,
         ];
@@ -47,6 +49,7 @@ enum Software: string
             self::Node18 => 'Node 18',
             self::Php81 => 'PHP 8.1',
             self::Php82 => 'PHP 8.2',
+            self::Php83 => 'PHP 8.3',
             self::Redis6 => 'Redis 6',
         };
     }
@@ -61,6 +64,7 @@ enum Software: string
             self::MySql80 => Tasks\RestartMySql::class,
             self::Php81 => Tasks\RestartPhp81::class,
             self::Php82 => Tasks\RestartPhp82::class,
+            self::Php83 => Tasks\RestartPhp83::class,
             self::Redis6 => Tasks\RestartRedis::class,
             default => null,
         };
@@ -74,6 +78,7 @@ enum Software: string
         return match ($this) {
             self::Php81 => new UpdateAlternatives('php', '/usr/bin/php8.1'),
             self::Php82 => new UpdateAlternatives('php', '/usr/bin/php8.2'),
+            self::Php83 => new UpdateAlternatives('php', '/usr/bin/php8.3'),
             default => null,
         };
     }
@@ -86,6 +91,7 @@ enum Software: string
         return match ($this) {
             self::Php81 => PhpVersion::Php81,
             self::Php82 => PhpVersion::Php82,
+            self::Php83 => PhpVersion::Php83,
             default => null,
         };
     }

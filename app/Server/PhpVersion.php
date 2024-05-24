@@ -8,6 +8,7 @@ enum PhpVersion: string
 {
     case Php81 = 'php81';
     case Php82 = 'php82';
+    case Php83 = 'php83';
 
     /**
      * Returns a pretty formatted name, something like 'PHP 8.1'
@@ -45,6 +46,7 @@ enum PhpVersion: string
         return match ($this) {
             self::Php81 => '/usr/bin/php8.1',
             self::Php82 => '/usr/bin/php8.2',
+            self::Php83 => '/usr/bin/php8.3',
         };
     }
 
@@ -56,6 +58,7 @@ enum PhpVersion: string
         return match ($this) {
             self::Php81 => '/run/php/php8.1-fpm.sock',
             self::Php82 => '/run/php/php8.2-fpm.sock',
+            self::Php83 => '/run/php/php8.3-fpm.sock',
         };
     }
 }
