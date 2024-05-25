@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Infrastructure\Entities\Image;
 use App\Infrastructure\Entities\Region;
 use App\Infrastructure\Entities\ServerSize;
+use App\Infrastructure\Entities\ServerType;
 use App\Infrastructure\ProviderFactory;
 use App\Infrastructure\ServerProvider;
 use App\Models\Credentials;
@@ -53,6 +54,7 @@ class CreateServerRequest extends FormRequest
             'ssh_keys' => ['array'],
             'ssh_keys.*' => [Rule::exists('ssh_keys', 'id')->where('user_id', $this->user()->id)],
             'add_key_to_github' => ['boolean'],
+            'type' => ['required', 'string', Rule::in(array_keys(ServerType::toOptions()))],
         ];
     }
 

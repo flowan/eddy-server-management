@@ -17,6 +17,11 @@
                     </x-clipboard>
                 </x-description-list-item>
 
+                <x-description-list-item :label="__('Type')">
+                    @svg($server->type->getIcon(), 'mr-1 w-5 h-5 text-gray-700')
+                    <span>{{ $server->type->getDisplayName() }}</span>
+                </x-description-list-item>
+
                 <x-description-list-item :label="__('Provider')">
                     <span>{{ $server->provider->getDisplayName() }}</span>
                 </x-description-list-item>

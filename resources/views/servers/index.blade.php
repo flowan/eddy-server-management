@@ -18,6 +18,9 @@
     @endif
 
     <x-splade-table :for="$servers">
+        <x-splade-cell type>
+            @svg($item->type->getIcon(), 'mr-3 w-6 h-6 text-gray-700') {{ $item->type->getDisplayName() }}
+        </x-splade-cell>
         <x-splade-cell status>
             <p class="space-x-2">
                 <span>{{ $item->status_name }}</span>

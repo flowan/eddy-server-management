@@ -7,6 +7,7 @@ use App\Events\ServerUpdated;
 use App\Exceptions\ServerHandler;
 use App\Infrastructure\Entities\ServerStatus;
 use App\Infrastructure\Entities\ServerSize;
+use App\Infrastructure\Entities\ServerType;
 use App\Infrastructure\ProviderFactory;
 use App\Infrastructure\ServerProvider;
 use App\Jobs\CreateServerOnInfrastructure;
@@ -56,6 +57,7 @@ class Server extends Model
         'region',
         'size',
         'image',
+        'type',
     ];
 
     protected $casts = [
@@ -75,6 +77,7 @@ class Server extends Model
         'storage_in_gb' => 'integer',
         'uninstallation_requested_at' => 'datetime',
         'user_public_key' => 'encrypted',
+        'type' => ServerType::class,
     ];
 
     protected $dispatchesEvents = [
@@ -107,7 +110,7 @@ class Server extends Model
      */
     public function getProviderNameAttribute(): string
     {
-        return $this->provider->name;
+        return $this->provider->getDisplayName();
     }
 
     /**

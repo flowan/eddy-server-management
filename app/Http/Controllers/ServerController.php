@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateServerRequest;
 use App\Infrastructure\Entities\ServerStatus;
+use App\Infrastructure\Entities\ServerType;
 use App\Jobs\DeleteServerFromInfrastructure;
 use App\KeyPairGenerator;
 use App\Models\Credentials;
@@ -38,6 +39,7 @@ class ServerController extends Controller
                 ->column('name', __('Name'))
                 ->column('provider_name', __('Provider'))
                 ->column('public_ipv4', __('IP Address'), classes: 'tabular-nums')
+                ->column('type', __('Type'))
                 ->column('status', __('Status'), alignment: 'right')
                 ->rowLink(fn (Server $server) => route('servers.show', $server))
                 ->defaultSort('name')
@@ -86,6 +88,7 @@ class ServerController extends Controller
             'credentials' => $credentials,
             'sshKeys' => $sshKeys,
             'hasGithubCredentials' => $this->user()->hasGithubCredentials(),
+            'serverTypes' => ServerType::toOptions(),
         ]);
     }
 
@@ -108,6 +111,7 @@ class ServerController extends Controller
             'region' => $request->validated('region'),
             'size' => $request->validated('size'),
             'image' => $request->validated('image'),
+            'type' => $request->validated('type'),
         ]);
 
         $keyPair = $keyPairGenerator->ed25519();

@@ -18,6 +18,7 @@
                     [
                         'credentials_id' => $defaultCredentials,
                         'custom_server' => $credentials->isEmpty(),
+                        'type' => 'server',
                     ]
                 "
             >
@@ -35,6 +36,16 @@
                 @endif
 
                 <x-splade-input v-if="form.custom_server" name="public_ipv4" :label="__('Public IPv4')" />
+
+                <x-splade-select
+                    name="type"
+                    :label="__('Server Type')"
+                    :options="$serverTypes"
+                    :choices="[
+                        'searchEnabled' => false,
+                        'removeItemButton' => false,
+                    ]"
+                />
 
                 <div v-if="form.credentials_id && !form.custom_server" class="space-y-4">
                     <x-splade-select name="region" :label="__('Region')" remote-url="`/servers/provider/${form.credentials_id}/regions`" />

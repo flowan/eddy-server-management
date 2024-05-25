@@ -4,6 +4,7 @@ namespace App\Tasks;
 
 use App\Enum;
 use App\Infrastructure\Entities\ServerStatus;
+use App\Infrastructure\Entities\ServerType;
 use App\Jobs\CleanupFailedServerProvisioning;
 use App\Jobs\InstallTaskCleanupCron;
 use App\Jobs\UpdateUserPublicKey;
@@ -125,6 +126,6 @@ class ProvisionFreshServer extends Task implements HasCallbacks
 
     public function softwareStack(): array
     {
-        return Software::defaultStack();
+        return Software::stackByServerType($this->server->type);
     }
 }

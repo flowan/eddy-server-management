@@ -2,6 +2,7 @@
 
 namespace App\Server;
 
+use App\Infrastructure\Entities\ServerType;
 use App\Tasks;
 use App\Tasks\Task;
 use App\Tasks\UpdateAlternatives;
@@ -34,6 +35,13 @@ enum Software: string
             self::Php83,
             self::Composer2,
             self::Node18,
+        ];
+    }
+
+    public static function databaseStack(): array
+    {
+        return [
+            self::MySql80,
         ];
     }
 
@@ -102,5 +110,13 @@ enum Software: string
     public function getInstallationViewName(): string
     {
         return 'tasks.software.install-'.Str::replace('_', '-', $this->value);
+    }
+
+    public static function stackByServerType(ServerType $serverType): array
+    {
+        return match ($serverType) {
+            ServerType::Database => self::databaseStack(),
+            default => self::defaultStack(),
+        };
     }
 }

@@ -86,7 +86,7 @@
                     $installedSoftware = $server->installed_software->toArray();
                 @endphp
 
-                @foreach (\App\Server\Software::defaultStack() as $software)
+                @foreach (\App\Server\Software::stackByServerType($server->type) as $software)
                     @php
                         $completed = in_array($software->value, $installedSoftware);
                         $current = ! $completed && $lastStepWasCompleted;
