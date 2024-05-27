@@ -20,7 +20,6 @@ class ServerFiles
 {
     public function __construct(private Server $server)
     {
-        $this->server = $server;
     }
 
     /**
@@ -136,27 +135,11 @@ class ServerFiles
         $files = Collection::make();
 
         if ($this->server->softwareIsInstalled(Software::Caddy2)) {
-            $files[] = new FileOnServer(
-                'Caddyfile',
-                __('The configuration file for Caddy. It is used to configure your site(s), including how to handle requests, TLS certificates, and more.'),
-                '/etc/caddy/Caddyfile',
-                PrismLanguage::Nginx,
-                $this->server->name,
-                new CaddyfileOnServer($this->server),
-                fn () => $this->server->runTask(ReloadCaddy::class)->asRoot()->inBackground()->dispatch(),
-            );
+            $files[] = $this->caddyfile();
         }
 
         if ($this->server->softwareIsInstalled(Software::MySql80)) {
-            $files[] = new FileOnServer(
-                __('MySQL config file'),
-                __('The MySQL configuration file. It is used to configure MySQL\'s behavior.'),
-                '/etc/mysql/my.cnf',
-                PrismLanguage::Clike,
-                $this->server->name,
-                new MySqlConfigOnServer($this->server),
-                fn () => $this->server->runTask(RestartMySql::class)->asRoot()->inBackground()->dispatch(),
-            );
+            $files[] = $this->mysqlConfigFile();
         }
 
         if ($this->server->softwareIsInstalled(Software::Php81)) {
