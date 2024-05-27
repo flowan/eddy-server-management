@@ -60,28 +60,36 @@ class ServerFiles
      */
     public function logFiles(): Collection
     {
-        $logs = Collection::make([
-            new FileOnServer(
+        $logs = Collection::make([]);
+
+        if ($this->server->softwareIsInstalled(Software::Caddy2)) {
+            $logs[] = new FileOnServer(
                 __('Caddy Access Log'),
                 __('The Caddy Access Log tracks every request made to your website, including details about the user, data accessed, and timing. This information helps you monitor traffic, user activity, and troubleshoot issues.'),
                 '/var/log/caddy/access.log'
-            ),
-            new FileOnServer(
+            );
+            $logs[] = new FileOnServer(
                 __('Caddy Error Log'),
                 __('The Caddy Error Log records all errors encountered while serving your website, allowing you to quickly identify and fix any issues that may affect user experience.'),
                 '/var/log/caddy/error.log'
-            ),
-            new FileOnServer(
+            );
+        }
+
+        if ($this->server->softwareIsInstalled(Software::MySql80)) {
+            $logs[] = new FileOnServer(
                 __('MySQL Error Log'),
                 __('The MySQL Error Log documents all errors encountered while running the MySQL server, providing a valuable tool for troubleshooting and resolving issues with the database'),
                 '/var/log/mysql/error.log'
-            ),
-            new FileOnServer(
+            );
+        }
+
+        if ($this->server->softwareIsInstalled(Software::Redis6)) {
+            $logs[] = new FileOnServer(
                 __('Redis Server Log'),
                 __('The Redis Server Log keeps track of all requests made to the Redis server, including operations performed, data accessed, and user information. This log helps you monitor performance and troubleshoot issues.'),
                 '/var/log/redis/redis-server.log'
-            ),
-        ]);
+            );
+        }
 
         if ($this->server->softwareIsInstalled(Software::Php81)) {
             $logs[] = new FileOnServer(
@@ -125,10 +133,31 @@ class ServerFiles
      */
     public function editableFiles(): Collection
     {
-        $files = Collection::make([
-            $this->caddyfile(),
-            $this->mysqlConfigFile(),
-        ]);
+        $files = Collection::make();
+
+        if ($this->server->softwareIsInstalled(Software::Caddy2)) {
+            $files[] = new FileOnServer(
+                'Caddyfile',
+                __('The configuration file for Caddy. It is used to configure your site(s), including how to handle requests, TLS certificates, and more.'),
+                '/etc/caddy/Caddyfile',
+                PrismLanguage::Nginx,
+                $this->server->name,
+                new CaddyfileOnServer($this->server),
+                fn () => $this->server->runTask(ReloadCaddy::class)->asRoot()->inBackground()->dispatch(),
+            );
+        }
+
+        if ($this->server->softwareIsInstalled(Software::MySql80)) {
+            $files[] = new FileOnServer(
+                __('MySQL config file'),
+                __('The MySQL configuration file. It is used to configure MySQL\'s behavior.'),
+                '/etc/mysql/my.cnf',
+                PrismLanguage::Clike,
+                $this->server->name,
+                new MySqlConfigOnServer($this->server),
+                fn () => $this->server->runTask(RestartMySql::class)->asRoot()->inBackground()->dispatch(),
+            );
+        }
 
         if ($this->server->softwareIsInstalled(Software::Php81)) {
             $files[] = new FileOnServer(
