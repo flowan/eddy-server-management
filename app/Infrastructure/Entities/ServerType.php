@@ -6,12 +6,14 @@ enum ServerType: string
 {
     case Server = 'server';
     case Database = 'database';
+    case Custom = 'custom';
 
     public function getDisplayName(): string
     {
         return match ($this) {
             self::Server => 'Server',
             self::Database => 'Database Server',
+            self::Custom => 'Custom Server',
         };
     }
 
@@ -20,6 +22,7 @@ enum ServerType: string
         return match ($this) {
             self::Server => 'Server (Caddy, PHP, Redis, Database, Node)',
             self::Database => 'Database Server (MySQL or PostgreSQL)',
+            self::Custom => 'Custom Server',
         };
     }
 
@@ -28,6 +31,7 @@ enum ServerType: string
         return match ($this) {
             self::Server => 'heroicon-o-server-stack',
             self::Database => 'heroicon-o-circle-stack',
+            self::Custom => 'heroicon-o-cube-transparent',
         };
     }
 

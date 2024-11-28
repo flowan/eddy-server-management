@@ -11,6 +11,7 @@ use App\Models\Credentials;
 use App\Models\Server;
 use App\Models\SshKey;
 use App\Provider;
+use App\Server\Software;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use ProtoneMedia\Splade\Facades\Toast;
@@ -89,6 +90,7 @@ class ServerController extends Controller
             'sshKeys' => $sshKeys,
             'hasGithubCredentials' => $this->user()->hasGithubCredentials(),
             'serverTypes' => ServerType::toOptions(),
+            'software' => Software::toOptions(),
         ]);
     }
 

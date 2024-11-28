@@ -45,6 +45,13 @@ enum Software: string
         ];
     }
 
+    public static function cacheStack(): array
+    {
+        return [
+            self::Redis6,
+        ];
+    }
+
     /**
      * Returns the description of the software.
      */
@@ -115,8 +122,16 @@ enum Software: string
     public static function stackByServerType(ServerType $serverType): array
     {
         return match ($serverType) {
+            ServerType::Custom => [],
             ServerType::Database => self::databaseStack(),
             default => self::defaultStack(),
         };
+    }
+
+    public static function toOptions(): array
+    {
+        return collect(self::cases())->mapWithKeys(function ($item) {
+            return [$item->value => $item->getDisplayName()];
+        })->toArray();
     }
 }

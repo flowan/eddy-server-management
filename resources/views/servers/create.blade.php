@@ -19,6 +19,8 @@
                         'credentials_id' => $defaultCredentials,
                         'custom_server' => $credentials->isEmpty(),
                         'type' => 'server',
+                        'with_database' => '1',
+                        'with_redis' => '1',
                     ]
                 "
             >
@@ -46,6 +48,38 @@
                         'removeItemButton' => false,
                     ]"
                 />
+
+                <x-splade-select
+                    v-if="form.type === 'custom'"
+                    name="selected_software"
+                    :label="__('Software')"
+                    :options="$software"
+                    :choices="[
+                        'searchEnabled' => false,
+                    ]"
+                    multiple
+                />
+
+                <div v-if="form.type === 'server'" class="flex gap-4">
+                    <x-splade-select
+                        name="with_database"
+                        :label="__('Install Database?')"
+                        :options="['0' => 'No', '1' => 'Yes']"
+                        :choices="[
+                            'searchEnabled' => false,
+                            'removeItemButton' => false,
+                        ]"
+                    />
+                    <x-splade-select
+                        name="with_redis"
+                        :label="__('Install Redis?')"
+                        :options="['0' => 'No', '1' => 'Yes']"
+                        :choices="[
+                            'searchEnabled' => false,
+                            'removeItemButton' => false,
+                        ]"
+                    />
+                </div>
 
                 <div v-if="form.credentials_id && !form.custom_server" class="space-y-4">
                     <x-splade-select name="region" :label="__('Region')" remote-url="`/servers/provider/${form.credentials_id}/regions`" />

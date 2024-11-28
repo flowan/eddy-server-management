@@ -58,6 +58,7 @@ class Server extends Model
         'size',
         'image',
         'type',
+        'selected_software',
     ];
 
     protected $casts = [
@@ -66,6 +67,7 @@ class Server extends Model
         'cpu_cores' => 'integer',
         'database_password' => 'encrypted',
         'installed_software' => AsArrayObject::class,
+        'selected_software' => AsArrayObject::class,
         'memory_in_mb' => 'integer',
         'password' => 'encrypted',
         'private_key' => 'encrypted',
